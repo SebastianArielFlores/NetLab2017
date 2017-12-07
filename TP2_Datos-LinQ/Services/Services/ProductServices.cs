@@ -17,7 +17,37 @@ namespace Services
             productRepository = new Repository<Product>();
         }
 
-        #region GET REAL EMPLOYEE BY ID (NO DTO)
+        #region GET ALL PRODUCTS
+        public IEnumerable<ProductDto> GetAll()
+        {
+            return productRepository.Set()
+                   //.ToList()
+                   .Select(p => new ProductDto
+                   {
+                       ProductID = p.ProductID,
+                       ProductName = p.ProductName,
+                       UnitPrice = p.UnitPrice,
+                   }).ToList();
+        }
+        #endregion
+
+
+        #region GET PRODUCT BY NAME
+        public ProductDto GetByName(string name)
+        {
+            return productRepository.Set()
+                   .Where(p => p.ProductName == name)
+                   .Select(p => new ProductDto
+                   {
+                       ProductID = p.ProductID,
+                       ProductName = p.ProductName,
+                       UnitPrice = p.UnitPrice,
+                   }).FirstOrDefault();
+        }
+        #endregion
+
+
+        #region GET REAL PRODUCT BY ID (NO DTO)
         //public ProductDto GetProductByID(Nullable<int> productId)
         public Product GetProductByID(Nullable<int> productId)
         {
@@ -26,7 +56,7 @@ namespace Services
 
             if (product == null)
             {
-                Console.WriteLine("No existe la orden!");
+                Console.WriteLine("No existe el producto!");
                 return null;
             }
 

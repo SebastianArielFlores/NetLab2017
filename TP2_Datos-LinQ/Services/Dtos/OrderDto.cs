@@ -34,5 +34,25 @@ namespace Dtos
         //[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderDetailDto> Order_Details { get; set; }
         //public virtual ShipperDto Shipper { get; set; }
+
+        public decimal calculateTotalAmount()
+        {
+            /*
+            var orderDetails = this.Order_Details;
+
+            var prizes = this.Order_Details
+                .Select(o => o.UnitPrice)
+                .ToList();
+
+            var quantities = this.Order_Details
+                .Select(o => o.Quantity)
+                .ToList();
+                */
+            var total = this.Order_Details.Sum(x => (x.Quantity * ((x.UnitPrice)-(x.UnitPrice * decimal.Parse(x.Discount.ToString())))));
+
+            total = System.Math.Round(total, 2);
+
+            return total;
+        }
     }
 }

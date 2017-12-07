@@ -21,7 +21,7 @@ namespace Services
         public IEnumerable<EmployeeDto> GetAll()
         {
             return employeeRepository.Set()
-                   .ToList()
+                   //.ToList()
                    .Select(e => new EmployeeDto
                    {
                        EmployeeID = e.EmployeeID,

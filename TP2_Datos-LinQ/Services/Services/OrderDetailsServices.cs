@@ -22,13 +22,17 @@ namespace Services
 
 
         #region GET ALL ORDER DETAILS
-        public IEnumerable<OrderDetailDto> GetAll()
+        public ICollection<OrderDetailDto> GetAll()
         {
             return orderDetailsRepository.Set()
                    .ToList()
                    .Select(c => new OrderDetailDto
                    {
-                       //Address = c.Address,
+                       OrderID=c.OrderID,
+                       Quantity=c.Quantity,
+                       UnitPrice =c.UnitPrice,
+                       ProductID=c.ProductID,
+                       Discount=c.Discount,
                    }).ToList();
         }
         #endregion

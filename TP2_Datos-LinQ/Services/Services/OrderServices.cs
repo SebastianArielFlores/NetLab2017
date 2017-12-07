@@ -30,21 +30,43 @@ namespace Services
 
 
         #region GET ALL ORDERS
-        public IEnumerable<OrderDto> GetAll()
+        public ICollection<OrderDto> GetAll(ServicesController services)
         {
             return orderRepository.Set()
                    .ToList()
-                   .Select(c => new OrderDto
+                   .Select(o => new OrderDto
                    {
-                       //Address = c.Address,
+                       OrderID = o.OrderID,
+                       CustomerID = o.CustomerID,
+                       EmployeeID = o.EmployeeID,
+                       ShipName = o.ShipName,
+                       //Order_Details = services.orderDetailsServices.GetAll()
+                            //.Where(d => d.OrderID == o.OrderID)
+                            //.Select(d => d)
+                            //.ToList(),
                    }).ToList();
+
+            /*
+            var coso = orderRepository.Set()
+                   .Select(o => new OrderDto
+                   {
+                       OrderID = o.OrderID,
+                       CustomerID = o.CustomerID,
+                       EmployeeID = o.EmployeeID,
+                       ShipName = o.ShipName,
+                       Order_Details = services.orderDetailsServices.GetAll()
+                            .Where(d => d.OrderID == o.OrderID)
+                            .Select(d => d)
+                            .ToList(),
+                   }).ToList();
+            */
         }
         #endregion
 
 
 
         #region GET ORDER BY ID
-        public Order GetOrderByID(int orderId,ServicesController services)
+        public Order GetOrderByID(int orderId, ServicesController services)
         {
             var order = orderRepository.Set().ToList()
                 .FirstOrDefault(c => c.OrderID == orderId);
@@ -71,7 +93,7 @@ namespace Services
                 });
             }
 
-            
+
             var orderByID = new Order()
             {
                 OrderID = order.OrderID,
@@ -88,9 +110,9 @@ namespace Services
                 ShipCountry = order.ShipCountry,
 
                 //Customer
-                Customer = services.customerServices.GetCustomerByID(order.CustomerID,services),
+                Customer = services.customerServices.GetCustomerByID(order.CustomerID, services),
                 //Employee = orderDto.Employee,
-                Employee = services.employeeServices.GetEmployeeByID(order.EmployeeID,services),
+                Employee = services.employeeServices.GetEmployeeByID(order.EmployeeID, services),
 
                 Order_Details = orderDetails,
 
@@ -113,8 +135,8 @@ namespace Services
 
                 //Shipper
             };
-            
-            
+
+
 
             return orderByID;
 
@@ -166,9 +188,9 @@ namespace Services
                 ShipCountry = order.ShipCountry,
 
                 //Customer
-                Customer = services.customerServices.GetCustomerDtoByID(order.CustomerID,services),
+                Customer = services.customerServices.GetCustomerDtoByID(order.CustomerID, services),
                 //Employee = orderDto.Employee,
-                Employee = services.employeeServices.GetEmployeeDtoByID(order.EmployeeID,services),
+                Employee = services.employeeServices.GetEmployeeDtoByID(order.EmployeeID, services),
 
                 Order_Details = orderDetails,
 
@@ -280,10 +302,18 @@ namespace Services
                 {
                     Discount = orderDetail.Discount,
                     //Order = orderDetail.Order,
-                    Order = services.orderServices.GetOrderByID(orderDetail.OrderID,services),
                     OrderID = orderDetail.OrderID,
-                    //Product = orderDetail.Product,
+                    //Order = services.orderServices.GetOrderByID(orderDetail.OrderID, services),
                     ProductID = orderDetail.ProductID,
+                    Product = services.productServices.GetProductByID(orderDetail.ProductID),
+                    /*
+                    Product = new Product
+                    {
+                        ProductID = orderDetail.Product.ProductID,
+                        UnitPrice = orderDetail.Product.UnitPrice,
+                        ProductName = orderDetail.Product.ProductName,
+                    },//orderDetail.Product
+                    */
                     Quantity = orderDetail.Quantity,
                     UnitPrice = orderDetail.UnitPrice,
                 });
@@ -362,10 +392,10 @@ namespace Services
                                        {
                                            OrderID = d.OrderID,
                                            Order = new Order
-                                                { OrderID = d.OrderID },
+                                           { OrderID = d.OrderID },
                                            Discount = d.Discount,
                                            Product = services.productServices.GetProductByID(d.ProductID),//new Product
-                                                //{ ProductID = d.ProductID },
+                                                                                                          //{ ProductID = d.ProductID },
                                            ProductID = d.ProductID,
                                            Quantity = d.Quantity,
                                            UnitPrice = d.UnitPrice,
