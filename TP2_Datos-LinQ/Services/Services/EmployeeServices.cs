@@ -93,8 +93,7 @@ namespace Services
                 Console.WriteLine("No existe el Empleado!");
                 return null;
             }
-
-            //var employeeDto = new EmployeeDto()
+            
             var employeeDto = new EmployeeDto()
             {
                 EmployeeID = employee.EmployeeID,

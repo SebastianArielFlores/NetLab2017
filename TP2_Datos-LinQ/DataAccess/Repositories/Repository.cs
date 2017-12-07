@@ -24,14 +24,12 @@ namespace DataAccess
         public void Remove(T entity)
         {
             context.Set<T>().Remove(entity);
-            //SaveChanges();
         }
 
         public T Update(T entity)
         {
             //context.Entry<T>(entity).State = System.Data.Entity.EntityState.Modified;
             context.Entry<T>(entity);
-            //SaveChanges();
 
             return entity;
         }

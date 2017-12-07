@@ -12,11 +12,10 @@ namespace Services
     public class OrderServices
     {
 
-
         /* 
-             * HACER ALTA, BAJA, MODIFICACIÓN DE ORDENES (Orders)
-             *
-             */
+        *  ALTA, BAJA, MODIFICACIÓN DE ORDENES (Orders)
+        *
+        */
 
         Repository<Order> orderRepository;
         Repository<Order_Detail> orderDetailsRepository;
@@ -40,26 +39,7 @@ namespace Services
                        CustomerID = o.CustomerID,
                        EmployeeID = o.EmployeeID,
                        ShipName = o.ShipName,
-                       //Order_Details = services.orderDetailsServices.GetAll()
-                            //.Where(d => d.OrderID == o.OrderID)
-                            //.Select(d => d)
-                            //.ToList(),
                    }).ToList();
-
-            /*
-            var coso = orderRepository.Set()
-                   .Select(o => new OrderDto
-                   {
-                       OrderID = o.OrderID,
-                       CustomerID = o.CustomerID,
-                       EmployeeID = o.EmployeeID,
-                       ShipName = o.ShipName,
-                       Order_Details = services.orderDetailsServices.GetAll()
-                            .Where(d => d.OrderID == o.OrderID)
-                            .Select(d => d)
-                            .ToList(),
-                   }).ToList();
-            */
         }
         #endregion
 
@@ -225,63 +205,18 @@ namespace Services
         public void Modify(OrderDto orderDto, ServicesController services)
         {
 
+            //var order = orderRepository.Set()
             var order = orderRepository.Set()
             .FirstOrDefault(x => x.OrderID == orderDto.OrderID);
 
             if (order == null)
-                throw new Exception("La orden no existe");
+            {
+                //throw new Exception("La orden no existe");
+                Console.WriteLine($"La Orden : {orderDto.OrderID} NO ha sido encontrada!.");
+            }
+                
 
             Console.WriteLine($"La Orden : {orderDto.OrderID} ha sido encontrada.");
-            //Console.WriteLine($"Su Nombre de Contacto es : {orderDto.ContactName}.");
-
-            //OrderID
-
-            var orderId = 0;
-
-            do
-            {
-                Console.WriteLine("");
-                Console.WriteLine("Ingrese el nuevo ID de la Orden:");
-            }
-            while (int.TryParse(Console.ReadLine(), out orderId));
-
-            orderDto.OrderID = orderId;
-
-
-            //ContactName
-            Console.WriteLine("");
-            Console.WriteLine("Ingrese el País destino de la Orden:");
-            orderDto.ShipCountry = Console.ReadLine();
-
-            //Date
-
-            DateTime orderDate;
-            do
-            {
-                Console.WriteLine("");
-                Console.WriteLine("Ingrese la fecha de Orden (formato dd/MM/yyyy):");
-            }
-            while (!(DateTime.TryParseExact(Console.ReadLine(),
-                                        "dd/MM/yyyy",
-                                        CultureInfo.InvariantCulture,
-                                        DateTimeStyles.None,
-                out orderDate)));
-
-            /*
-            if (DateTime.TryParseExact(Console.ReadLine(),
-                                        "dd/MM/yyyy",
-                                        CultureInfo.InvariantCulture,
-                                        DateTimeStyles.None,
-                out dt))
-            {
-                //valid date
-
-            }
-            else
-            {
-                //invalid date
-            }
-            */
             orderRepository.Update(order);
             orderRepository.SaveChanges();
         }
@@ -413,9 +348,6 @@ namespace Services
                         Console.WriteLine($"El Detalle con ID de Orden : {detail.OrderID}, Producto : {detail.Product.ProductName}, Cantidad : {detail.Quantity} será eliminado.");
                         orderDetailsRepository.Remove(detailRemove);
                         orderDetailsRepository.SaveChanges();
-
-                        //orderDetailsRepository.Remove(detail);
-                        //orderDetailsRepository.SaveChanges();
                     }
                     Console.WriteLine($"");
                     Console.WriteLine($"Detalles eliminados.");
@@ -425,9 +357,6 @@ namespace Services
                     Console.WriteLine($"");
                     Console.WriteLine($"La Orden no tenía Detalles asociados.");
                 }
-
-                //orderRepository.Remove(orderRemove);
-                //orderRepository.SaveChanges();
 
                 var order = orderRepository.Set()
                 .FirstOrDefault(x => x.OrderID == deletedOrderId);
