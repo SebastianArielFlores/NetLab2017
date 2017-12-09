@@ -47,6 +47,7 @@ namespace Services
 
             if (detail == null)
             {
+                NuevaLinea();
                 Console.WriteLine("No existe el Detalle de Orden!");
                 return null;
             }
@@ -67,5 +68,10 @@ namespace Services
             //throw new NotImplementedException();
         }
         #endregion
+
+        public void NuevaLinea()
+        {
+            Console.WriteLine("");
+        }
     }
 }

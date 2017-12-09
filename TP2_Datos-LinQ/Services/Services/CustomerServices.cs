@@ -25,18 +25,30 @@ namespace Services
 
 
         #region GET ALL CUSTOMERS
-        public IEnumerable<CustomerDto> GetAll()
+        public IEnumerable<CustomerDto> GetAllDto()
         {
             return customerRepository.Set()
                    .ToList()
                    .Select(c => new CustomerDto
                    {
-                       //Address = c.Address,
+                       
                    }).ToList();
         }
         #endregion
 
+        #region GET ALL CUSTOMERS real
+        public IEnumerable<Customer> GetAll()
+        {
+            return customerRepository.Set()
+                   .ToList()
+                   .Select(c => new Customer
+                   {
+                       Country = c.Country,
+                       ContactName= c.ContactName,
 
+                   }).ToList();
+        }
+        #endregion
 
         #region GET CUSTOMER BY ID
         public CustomerDto GetCustomerDtoByID(string customerId, ServicesController services)
@@ -48,6 +60,7 @@ namespace Services
 
             if (customer == null)
             {
+                NuevaLinea();
                 Console.WriteLine("No existe el Cliente!");
                 return null;
             }
@@ -73,6 +86,7 @@ namespace Services
 
             if (customer == null)
             {
+                NuevaLinea();
                 Console.WriteLine("No existe el Cliente!");
                 return null;
             }
@@ -105,20 +119,21 @@ namespace Services
             Console.WriteLine($"Su Nombre de Contacto es : {customerDto.ContactName}.");
 
             //CustomerID
-            Console.WriteLine("");
+            NuevaLinea();
             Console.WriteLine("Ingrese el nuevo ID del Cliente:");
             customerDto.CustomerID = Console.ReadLine();
 
             //ContactName
-            Console.WriteLine("");
+            NuevaLinea();
             Console.WriteLine("Ingrese el nuevo Nombre de Contacto:");
             customerDto.ContactName = Console.ReadLine();
 
             //ContactName
-            Console.WriteLine("");
+            NuevaLinea();
             Console.WriteLine("Ingrese el nuevo Nombre de Compañia:");
             customerDto.CompanyName = Console.ReadLine();
 
+            //...
 
             customer.Address = customerDto.Address;
             customer.City = customerDto.City;
@@ -177,5 +192,40 @@ namespace Services
             customerRepository.SaveChanges();
         }
         #endregion
+
+        public List<BestCustomerDto> BestCostumer(ServicesController services)
+        {
+            var customers = services.customerServices.GetAll();
+            return customers//services.customerServices.GetAll()
+                .GroupBy(k => k.Country)
+                .Select(k => new BestCustomerDto
+                {
+                    Country = k.Key,
+
+                    Name = k
+                        .OrderByDescending(c => c.Orders
+                        .Sum(o => o.Order_Details
+                        .Sum(d => d.Quantity * d.Product.UnitPrice)))
+                        .Select(c => c.ContactName)
+                        .FirstOrDefault(),
+
+                    TotalPurchased = k.Select(v => v.Orders
+                        .Where(c => c.CustomerID == k
+                        .OrderByDescending(b => b.Orders
+                        .Sum(o => o.Order_Details
+                        .Sum(d => d.Quantity * d.Product.UnitPrice)))
+                        .Select(b => b.CustomerID)
+                        .FirstOrDefault())
+                        .Sum(g => g.Order_Details
+                        .Sum(d => d.Quantity * d.Product.UnitPrice)))
+                        .Sum()
+                }).ToList();
+        }
+
+
+        public void NuevaLinea()
+        {
+            Console.WriteLine("");
+        }
     }
 }

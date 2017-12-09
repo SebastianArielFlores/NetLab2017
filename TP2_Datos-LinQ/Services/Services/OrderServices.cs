@@ -53,6 +53,7 @@ namespace Services
 
             if (order == null)
             {
+                NuevaLinea();
                 Console.WriteLine("No existe la orden!");
                 return null;
             }
@@ -132,6 +133,7 @@ namespace Services
 
             if (order == null)
             {
+                NuevaLinea();
                 Console.WriteLine("No existe la orden!");
                 return null;
             }
@@ -212,11 +214,36 @@ namespace Services
             if (order == null)
             {
                 //throw new Exception("La orden no existe");
+                NuevaLinea();
                 Console.WriteLine($"La Orden : {orderDto.OrderID} NO ha sido encontrada!.");
             }
-                
 
-            Console.WriteLine($"La Orden : {orderDto.OrderID} ha sido encontrada.");
+            try
+            {
+                order.CustomerID = orderDto.CustomerID;
+                order.EmployeeID = orderDto.EmployeeID;
+                order.Freight = orderDto.Freight;
+                order.OrderDate = orderDto.OrderDate;
+                order.RequiredDate = orderDto.RequiredDate;
+                order.ShipAddress = orderDto.ShipAddress;
+                order.ShipCity = orderDto.ShipCity;
+                order.ShipCountry = orderDto.ShipCountry;
+                order.ShipName = orderDto.ShipName;
+                order.ShippedDate = orderDto.ShippedDate;
+                order.ShipPostalCode = orderDto.ShipPostalCode;
+                order.ShipRegion = orderDto.ShipRegion;
+                order.ShipVia = orderDto.ShipVia;
+                //order.Order_Details = orderDto.Order_Details;
+            }   
+            catch
+            {
+                NuevaLinea();
+                Console.WriteLine($"Se produjo un error al intentar modificar la Orden con ID : ''{orderDto.OrderID}''.");
+                return;
+            }
+
+            NuevaLinea();
+            Console.WriteLine($"La Orden con ID : ''{orderDto.OrderID}'' ha sido modificada.");
             orderRepository.Update(order);
             orderRepository.SaveChanges();
         }
@@ -345,16 +372,17 @@ namespace Services
                         if (detailRemove == null)
                             throw new Exception("No hay Detalle de Orden.");
 
+                        NuevaLinea();
                         Console.WriteLine($"El Detalle con ID de Orden : {detail.OrderID}, Producto : {detail.Product.ProductName}, Cantidad : {detail.Quantity} será eliminado.");
                         orderDetailsRepository.Remove(detailRemove);
                         orderDetailsRepository.SaveChanges();
                     }
-                    Console.WriteLine($"");
+                    NuevaLinea();
                     Console.WriteLine($"Detalles eliminados.");
                 }
                 else
                 {
-                    Console.WriteLine($"");
+                    NuevaLinea();
                     Console.WriteLine($"La Orden no tenía Detalles asociados.");
                 }
 
@@ -368,10 +396,34 @@ namespace Services
                 orderRepository.Remove(order);
                 orderRepository.SaveChanges();
 
-                Console.WriteLine($"");
+                NuevaLinea();
                 Console.WriteLine($"La Orden con ID : {deletedOrderId} ha sido eliminada con éxito.");
             }
         }
         #endregion
+
+        #region GET ALL ORDERS OF A CUSTOMER BY ID
+        public ICollection<Order> GetAllOfCustomerByID(string customerID,ServicesController services)
+        {
+            return orderRepository.Set()
+                   //.ToList()
+                   .Where(o => o.CustomerID == customerID )
+                   .Select(o => new Order
+                   {
+                       OrderID = o.OrderID,
+                       CustomerID = o.CustomerID,
+                       //EmployeeID = o.EmployeeID,
+                       //ShipName = o.ShipName,
+                       ShipCountry = o.ShipCountry,
+                       Order_Details = o.Order_Details,
+                   }).ToList();
+        }
+        #endregion
+
+
+        public void NuevaLinea()
+        {
+            Console.WriteLine("");
+        }
     }
 }

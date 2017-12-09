@@ -21,7 +21,6 @@ namespace Services
         public IEnumerable<ProductDto> GetAll()
         {
             return productRepository.Set()
-                   //.ToList()
                    .Select(p => new ProductDto
                    {
                        ProductID = p.ProductID,
@@ -48,7 +47,6 @@ namespace Services
 
 
         #region GET REAL PRODUCT BY ID (NO DTO)
-        //public ProductDto GetProductByID(Nullable<int> productId)
         public Product GetProductByID(Nullable<int> productId)
         {
             var product = productRepository.Set().ToList()
@@ -56,10 +54,11 @@ namespace Services
 
             if (product == null)
             {
+                NuevaLinea();
                 Console.WriteLine("No existe el producto!");
                 return null;
             }
-
+            /*
             //var productDto = new ProductDto()
             var productDto = new Product()
             {
@@ -67,10 +66,15 @@ namespace Services
                 //ContactName = product.ContactName,
                 //CompanyName = product.CompanyName,
             };
-
+            */
             return product;
 
         }
         #endregion
+
+        public void NuevaLinea()
+        {
+            Console.WriteLine("");
+        }
     }
 }

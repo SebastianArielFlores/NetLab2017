@@ -62,6 +62,7 @@ namespace Services
 
             if (employee == null)
             {
+                NuevaLinea();
                 Console.WriteLine("No existe el Empleado!");
                 return null;
             }
@@ -90,6 +91,7 @@ namespace Services
 
             if (employee == null)
             {
+                NuevaLinea();
                 Console.WriteLine("No existe el Empleado!");
                 return null;
             }
@@ -105,5 +107,10 @@ namespace Services
 
         }
         #endregion
+
+        public void NuevaLinea()
+        {
+            Console.WriteLine("");
+        }
     }
 }

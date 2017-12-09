@@ -26,6 +26,5 @@ namespace Services
             orderDetailsServices = new OrderDetailsServices();
             productServices = new ProductServices();
         }
-        
     }
 }
