@@ -47,7 +47,7 @@ namespace Services
 
             if (detail == null)
             {
-                NuevaLinea();
+                NewLine();
                 Console.WriteLine("No existe el Detalle de Orden!");
                 return null;
             }
@@ -69,7 +69,7 @@ namespace Services
         }
         #endregion
 
-        public void NuevaLinea()
+        public void NewLine()
         {
             Console.WriteLine("");
         }

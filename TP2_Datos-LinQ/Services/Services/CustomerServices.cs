@@ -14,42 +14,51 @@ namespace Services
          * HACER ALTA, BAJA, MODIFICACIÓN DE CLIENTES (Customers)
          *
          */
-        
+
         Repository<Customer> customerRepository;
+
+        Repository<Employee> employeeRepository;
 
         public CustomerServices()
         {
             customerRepository = new Repository<Customer>();
+
+            employeeRepository = new Repository<Employee>();
         }
+        
 
 
-
-        #region GET ALL CUSTOMERS
+        #region GET ALL CUSTOMERS DTO
         public IEnumerable<CustomerDto> GetAllDto()
         {
             return customerRepository.Set()
                    .ToList()
                    .Select(c => new CustomerDto
                    {
-                       
+                       Country = c.Country,
+                       ContactName = c.ContactName,
+
                    }).ToList();
+
+            
         }
         #endregion
 
-        #region GET ALL CUSTOMERS real
+        #region GET ALL CUSTOMERS
         public IEnumerable<Customer> GetAll()
         {
             return customerRepository.Set()
                    .ToList()
                    .Select(c => new Customer
                    {
+                       CustomerID = c.CustomerID,
                        Country = c.Country,
-                       ContactName= c.ContactName,
-
+                       ContactName = c.ContactName,
+                       Orders = c.Orders,
                    }).ToList();
         }
         #endregion
-
+        
         #region GET CUSTOMER BY ID
         public CustomerDto GetCustomerDtoByID(string customerId, ServicesController services)
         {
@@ -60,7 +69,7 @@ namespace Services
 
             if (customer == null)
             {
-                NuevaLinea();
+                NewLine();
                 Console.WriteLine("No existe el Cliente!");
                 return null;
             }
@@ -78,7 +87,7 @@ namespace Services
         #endregion
 
         #region GET REAL CUSTOMER BY ID (NO DTO)
-        public Customer GetCustomerByID(string customerId,ServicesController services)
+        public Customer GetCustomerByID(string customerId, ServicesController services)
         {
 
             var customer = services.customerServices.customerRepository.Set().ToList()
@@ -86,16 +95,18 @@ namespace Services
 
             if (customer == null)
             {
-                NuevaLinea();
+                NewLine();
                 Console.WriteLine("No existe el Cliente!");
                 return null;
             }
+            //customer.Country = "Argentina";
 
             var customerByID = new Customer()
             {
                 CustomerID = customer.CustomerID,
                 ContactName = customer.ContactName,
                 CompanyName = customer.CompanyName,
+                Country = customer.Country,
             };
 
             return customerByID;
@@ -104,9 +115,9 @@ namespace Services
         #endregion
 
 
-        #region MODIFY / UPDATE CUSTOMER
-        //public void ModifyCustomer(string customerId)
-        public void Modify(CustomerDto customerDto)
+        #region Update / UPDATE CUSTOMER
+        //public void UpdateCustomer(string customerId)
+        public void Update(CustomerDto customerDto)
         {
 
             var customer = customerRepository.Set()
@@ -119,17 +130,17 @@ namespace Services
             Console.WriteLine($"Su Nombre de Contacto es : {customerDto.ContactName}.");
 
             //CustomerID
-            NuevaLinea();
+            NewLine();
             Console.WriteLine("Ingrese el nuevo ID del Cliente:");
             customerDto.CustomerID = Console.ReadLine();
 
             //ContactName
-            NuevaLinea();
+            NewLine();
             Console.WriteLine("Ingrese el nuevo Nombre de Contacto:");
             customerDto.ContactName = Console.ReadLine();
 
             //ContactName
-            NuevaLinea();
+            NewLine();
             Console.WriteLine("Ingrese el nuevo Nombre de Compañia:");
             customerDto.CompanyName = Console.ReadLine();
 
@@ -193,39 +204,64 @@ namespace Services
         }
         #endregion
 
-        public List<BestCustomerDto> BestCostumer(ServicesController services)
+
+        #region BEST CUSTOMER BY COUNTRY
+
+        public List<BestCustomerDto> GetBestCostumer(ServicesController services)
         {
             var customers = services.customerServices.GetAll();
-            return customers//services.customerServices.GetAll()
-                .GroupBy(k => k.Country)
+
+            return customers //services.customerServices.GetAll()
+                .GroupBy(c => c.Country)
                 .Select(k => new BestCustomerDto
                 {
                     Country = k.Key,
 
                     Name = k
-                        .OrderByDescending(c => c.Orders
-                        .Sum(o => o.Order_Details
-                        .Sum(d => d.Quantity * d.Product.UnitPrice)))
+                        .OrderByDescending(c => c.Orders//services.orderServices.GetAllByIDOfCustomer(c.CustomerID,services)//c.Orders
+                            .Sum(o => o.Order_Details
+                            .Sum(d => d.Quantity * d.Product.UnitPrice)))
                         .Select(c => c.ContactName)
                         .FirstOrDefault(),
 
                     TotalPurchased = k.Select(v => v.Orders
                         .Where(c => c.CustomerID == k
                         .OrderByDescending(b => b.Orders
-                        .Sum(o => o.Order_Details
-                        .Sum(d => d.Quantity * d.Product.UnitPrice)))
+                            .Sum(o => o.Order_Details
+                            .Sum(d => d.Quantity * d.Product.UnitPrice)))
                         .Select(b => b.CustomerID)
                         .FirstOrDefault())
                         .Sum(g => g.Order_Details
-                        .Sum(d => d.Quantity * d.Product.UnitPrice)))
+                            .Sum(d => d.Quantity * d.Product.UnitPrice)))
                         .Sum()
                 }).ToList();
         }
+        #endregion
 
-
-        public void NuevaLinea()
+        public void NewLine()
         {
             Console.WriteLine("");
+        }
+
+        public void UPDATE(ServicesController services)
+        {
+            var coso = services.customerServices.GetCustomerByID("ANATR", services);
+
+            coso.Country = "Argentina";
+
+            /*
+            var coso2 = new Employee
+            {
+                FirstName = coso.FirstName,
+                LastName = coso.LastName,
+                Address = coso.Address,
+                City = coso.City,
+                Country = coso.Country,
+
+            };
+            */
+            customerRepository.Update(coso);
+            customerRepository.SaveChanges();
         }
     }
 }

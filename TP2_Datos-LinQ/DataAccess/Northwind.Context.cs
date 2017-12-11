@@ -13,10 +13,10 @@ namespace DataAccess
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class PruebaSqlEntities : DbContext
+    public partial class TP2DatosLinQEntities : DbContext
     {
-        public PruebaSqlEntities()
-            : base("name=PruebaSqlEntities")
+        public TP2DatosLinQEntities()
+            : base("name=TP2DatosLinQEntities")
         {
         }
     

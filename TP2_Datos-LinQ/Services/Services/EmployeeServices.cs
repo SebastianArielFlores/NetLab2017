@@ -62,11 +62,12 @@ namespace Services
 
             if (employee == null)
             {
-                NuevaLinea();
+                NewLine();
                 Console.WriteLine("No existe el Empleado!");
                 return null;
             }
-
+            
+            /*
             //var employeeDto = new EmployeeDto()
             var employeeDto = new Employee()
             {
@@ -74,6 +75,7 @@ namespace Services
                 //ContactName = employee.ContactName,
                 //CompanyName = employee.CompanyName,
             };
+            */
 
             return employee;
 
@@ -91,7 +93,7 @@ namespace Services
 
             if (employee == null)
             {
-                NuevaLinea();
+                NewLine();
                 Console.WriteLine("No existe el Empleado!");
                 return null;
             }
@@ -108,7 +110,7 @@ namespace Services
         }
         #endregion
 
-        public void NuevaLinea()
+        public void NewLine()
         {
             Console.WriteLine("");
         }

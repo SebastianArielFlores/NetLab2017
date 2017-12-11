@@ -8,13 +8,13 @@ namespace DataAccess
 {
     public class Context
     {
-        private static PruebaSqlEntities context;
+        private static TP2DatosLinQEntities context;
 
         public Context()
         {
-            context = new PruebaSqlEntities();
+            context = new TP2DatosLinQEntities();
         }
-        public static PruebaSqlEntities GetContext()
+        public static TP2DatosLinQEntities GetContext()
         {
             return context;
         }

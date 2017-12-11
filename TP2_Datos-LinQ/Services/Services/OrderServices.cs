@@ -53,7 +53,7 @@ namespace Services
 
             if (order == null)
             {
-                NuevaLinea();
+                NewLine();
                 Console.WriteLine("No existe la orden!");
                 return null;
             }
@@ -133,7 +133,7 @@ namespace Services
 
             if (order == null)
             {
-                NuevaLinea();
+                NewLine();
                 Console.WriteLine("No existe la orden!");
                 return null;
             }
@@ -202,9 +202,9 @@ namespace Services
         #endregion
 
 
-        #region MODIFY / UPDATE ORDER
-        //public void ModifyOrder(string orderId)
-        public void Modify(OrderDto orderDto, ServicesController services)
+        #region Update / UPDATE ORDER
+        //public void UpdateOrder(string orderId)
+        public void Update(OrderDto orderDto, ServicesController services)
         {
 
             //var order = orderRepository.Set()
@@ -214,7 +214,7 @@ namespace Services
             if (order == null)
             {
                 //throw new Exception("La orden no existe");
-                NuevaLinea();
+                NewLine();
                 Console.WriteLine($"La Orden : {orderDto.OrderID} NO ha sido encontrada!.");
             }
 
@@ -237,13 +237,13 @@ namespace Services
             }   
             catch
             {
-                NuevaLinea();
-                Console.WriteLine($"Se produjo un error al intentar modificar la Orden con ID : ''{orderDto.OrderID}''.");
+                NewLine();
+                Console.WriteLine($"Se produjo un error al intentar modificar la Orden con ID : '{orderDto.OrderID}'.");
                 return;
             }
 
-            NuevaLinea();
-            Console.WriteLine($"La Orden con ID : ''{orderDto.OrderID}'' ha sido modificada.");
+            NewLine();
+            Console.WriteLine($"La Orden con ID : '{orderDto.OrderID}' ha sido modificada.");
             orderRepository.Update(order);
             orderRepository.SaveChanges();
         }
@@ -372,17 +372,17 @@ namespace Services
                         if (detailRemove == null)
                             throw new Exception("No hay Detalle de Orden.");
 
-                        NuevaLinea();
+                        NewLine();
                         Console.WriteLine($"El Detalle con ID de Orden : {detail.OrderID}, Producto : {detail.Product.ProductName}, Cantidad : {detail.Quantity} será eliminado.");
                         orderDetailsRepository.Remove(detailRemove);
                         orderDetailsRepository.SaveChanges();
                     }
-                    NuevaLinea();
+                    NewLine();
                     Console.WriteLine($"Detalles eliminados.");
                 }
                 else
                 {
-                    NuevaLinea();
+                    NewLine();
                     Console.WriteLine($"La Orden no tenía Detalles asociados.");
                 }
 
@@ -396,14 +396,14 @@ namespace Services
                 orderRepository.Remove(order);
                 orderRepository.SaveChanges();
 
-                NuevaLinea();
+                NewLine();
                 Console.WriteLine($"La Orden con ID : {deletedOrderId} ha sido eliminada con éxito.");
             }
         }
         #endregion
 
         #region GET ALL ORDERS OF A CUSTOMER BY ID
-        public ICollection<Order> GetAllOfCustomerByID(string customerID,ServicesController services)
+        public ICollection<Order> GetAllByIDOfCustomer(string customerID,ServicesController services)
         {
             return orderRepository.Set()
                    //.ToList()
@@ -421,7 +421,7 @@ namespace Services
         #endregion
 
 
-        public void NuevaLinea()
+        public void NewLine()
         {
             Console.WriteLine("");
         }

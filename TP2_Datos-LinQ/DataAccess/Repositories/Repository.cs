@@ -9,7 +9,7 @@ namespace DataAccess
     public class Repository<T>
         where T : class
     {
-        private PruebaSqlEntities context;
+        private TP2DatosLinQEntities context;
 
         public Repository()
         {
