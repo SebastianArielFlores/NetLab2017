@@ -12,16 +12,21 @@ namespace Services
     {
         Repository<Employee> employeeRepository;
 
+
+        #region EmployeeServices CLASS CONSTRUCTOR
         public EmployeeServices()
         {
-            employeeRepository = new Repository<Employee>();
+            this.employeeRepository = new Repository<Employee>();
         }
+        #endregion
 
+        
         #region GET ALL EMPLOYEES
         public IEnumerable<EmployeeDto> GetAll()
         {
-            return employeeRepository.Set()
-                   //.ToList()
+            try
+            {
+                return this.employeeRepository.Set()
                    .Select(e => new EmployeeDto
                    {
                        EmployeeID = e.EmployeeID,
@@ -49,70 +54,87 @@ namespace Services
                        //Orders
                        */
                    }).ToList();
+            }
+            catch
+            {
+                NewLine();
+                Console.WriteLine("Se produjo un ERROR al intentar obtener todos los Empleados.");
+
+                return null;
+            }
         }
         #endregion
 
 
         #region GET REAL EMPLOYEE BY ID (NO DTO)
-        //public EmployeeDto GetEmployeeByID(Nullable<int> employeeId)
         public Employee GetEmployeeByID(Nullable<int> employeeId,ServicesController services)
         {
-            var employee = services.employeeServices.employeeRepository.Set().ToList()
+            try
+            {
+                var employee = services.employeeServices.employeeRepository.Set().ToList()
                 .FirstOrDefault(e => e.EmployeeID == employeeId);
 
-            if (employee == null)
+                if (employee == null)
+                {
+                    NewLine();
+                    Console.WriteLine("No existe el Empleado!");
+
+                    return null;
+                }
+
+                return employee;
+
+            }
+            catch
             {
                 NewLine();
-                Console.WriteLine("No existe el Empleado!");
+                Console.WriteLine($"Se produjo un ERROR al intentar obtener el Empleado con ID : '{employeeId}'.");
+
                 return null;
             }
-            
-            /*
-            //var employeeDto = new EmployeeDto()
-            var employeeDto = new Employee()
-            {
-                EmployeeID = employee.EmployeeID,
-                //ContactName = employee.ContactName,
-                //CompanyName = employee.CompanyName,
-            };
-            */
-
-            return employee;
-
         }
         #endregion
-
-
+        
 
         #region GET EMPLOYEE DTO BY ID
-        //public EmployeeDto GetEmployeeByID(Nullable<int> employeeId)
         public EmployeeDto GetEmployeeDtoByID(Nullable<int> employeeId,ServicesController services)
         {
-            var employee = services.employeeServices.employeeRepository.Set().ToList()
+            try
+            {
+                var employee = services.employeeServices.employeeRepository.Set().ToList()
                 .FirstOrDefault(e => e.EmployeeID == employeeId);
 
-            if (employee == null)
+                if (employee == null)
+                {
+                    NewLine();
+                    Console.WriteLine("No existe el Empleado!");
+
+                    return null;
+                }
+
+                var employeeDto = new EmployeeDto()
+                {
+                    EmployeeID = employee.EmployeeID,
+                };
+
+                return employeeDto;
+            }
+            catch
             {
                 NewLine();
-                Console.WriteLine("No existe el Empleado!");
+                Console.WriteLine($"Se produjo un ERROR al intentar obtener el Empleado con ID : '{employeeId}'.");
+
                 return null;
             }
-            
-            var employeeDto = new EmployeeDto()
-            {
-                EmployeeID = employee.EmployeeID,
-                //ContactName = employee.ContactName,
-                //CompanyName = employee.CompanyName,
-            };
-
-            return employeeDto;
-
         }
         #endregion
 
+        
+        #region NEW CONSOLE EMPTY COMMAND LINE
         public void NewLine()
         {
             Console.WriteLine("");
         }
+        #endregion
     }
 }

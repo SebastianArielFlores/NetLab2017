@@ -16,15 +16,17 @@ namespace Services
         public OrderDetailsServices orderDetailsServices;
         public ProductServices productServices;
 
+        #region ServicesController CLASS CONSTRUCTOR
         public ServicesController()
         {
-            context = new DataAccess.Context();
+            this.context = new DataAccess.Context();
 
-            customerServices = new CustomerServices();
-            employeeServices = new EmployeeServices();
-            orderServices = new OrderServices();
-            orderDetailsServices = new OrderDetailsServices();
-            productServices = new ProductServices();
+            this.customerServices = new CustomerServices();
+            this.employeeServices = new EmployeeServices();
+            this.orderServices = new OrderServices();
+            this.orderDetailsServices = new OrderDetailsServices();
+            this.productServices = new ProductServices();
         }
+        #endregion
     }
 }

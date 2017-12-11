@@ -11,34 +11,19 @@ namespace TP2_Datos_LinQ
 {
     class Program
     {
+
+        #region MAIN MENU
         static void Main(string[] args)
         {
-
-            //var servicesController = new ServicesController();
-            var services = new ServicesController();
-
-
-            /*
-            var customers = services.GetAll();
-
-            foreach (var customer in customers)
-            {
-                Console.WriteLine($"{customer.CustomerID}   {customer.ContactName}");
-            }
             
-            Console.ReadLine();
-            */
+            var services = new ServicesController();
+            
             var action = "";
 
             while (action != "F")
             {
                 while (action != "F")
-                //while (action != "M" && action != "D" && action != "C")
                 {
-
-                    //services.customerServices.UPDATE(services);
-                    
-
                     NewLine();
                     Console.WriteLine("-----------------------");
                     Console.WriteLine("       M E N U");
@@ -55,7 +40,6 @@ namespace TP2_Datos_LinQ
                     Console.WriteLine("Ingrese 'F' para Finalizar");
 
                     action = Console.ReadLine().ToUpper();
-                    // action = action.ToUpper();
 
                     switch (action)
                     {
@@ -85,10 +69,9 @@ namespace TP2_Datos_LinQ
                                 {
                                     break;
                                 }
-                                //services.customerServices.Update(orderDtoFind);
+                                
                                 orderUpdateDto = orderDtoFind;
-                                //orderUpdateDto.OrderID = orderDtoFind.OrderID;
-                                //orderUpdateDto.OrderID = orderId;
+                                
                                 orderUpdateDto = OrderCreateEdit("UPDATE", services, orderUpdateDto);
                             }
                             else
@@ -104,10 +87,7 @@ namespace TP2_Datos_LinQ
 
                             NewLine();
                             Console.WriteLine("ORDEN MODIFICADA CON ÉXITO");
-                            /*
-                            NewLine();
-                            Console.WriteLine($"La Orden con Id '{lastAddedOrderMod.OrderID}' con importe $ {totalAmountMod} se ha creado correctamente.");
-                            */
+
                             NewLine();
                             Console.WriteLine("PRESIONE CUALQUIER TECLA PARA CONTINUAR...");
                             Console.ReadKey();
@@ -125,16 +105,12 @@ namespace TP2_Datos_LinQ
                                 Console.WriteLine("ELIMINAR ORDEN:");
                                 Console.WriteLine("-----------------");
                                 Console.WriteLine("Ingrese el ID de la Orden a ELIMINAR:");
-
-                                //var orderRemoveId = Console.ReadLine();
+                                
 
                                 var orderRemoveId = -1;
-
-                                //try
-                                //{
+                                
                                 bool isInt = int.TryParse(Console.ReadLine(), out orderRemoveId);
-
-                                //if (int.TryParse(Console.ReadLine(), out orderRemoveId))
+                                
                                 if (isInt)
                                 {
                                     orderDtoRemove = services.orderServices.GetOrderDtoByID(orderRemoveId, services);
@@ -166,14 +142,12 @@ namespace TP2_Datos_LinQ
                                 }
 
                                 orderDtoRemove = null;
-                                //}
-                                //catch
-                                //{
+
                                 //throw new Exception("ERROR: No se encontró la Orden o no existe!");
                                 NewLine();
                                 Console.WriteLine("ERROR: No se encontró la Orden o no existe!");
                                 NewLine();
-                                //}
+
                             }
                             while (orderDtoRemove == null);
 
@@ -203,7 +177,7 @@ namespace TP2_Datos_LinQ
 
                             if (lastAddedOrder == null)
                             {
-                                Console.WriteLine("Hubo un error al intentar obtener la nueva Orden creada.");
+                                Console.WriteLine("Hubo un ERROR al intentar obtener la nueva Orden creada.");
                                 break;
                             }
 
@@ -211,7 +185,7 @@ namespace TP2_Datos_LinQ
 
                             if (totalAmount == 0)
                             {
-                                Console.WriteLine("Hubo un error al intentar calcular el Importe de la Orden creada.");
+                                Console.WriteLine("Hubo un ERROR al intentar calcular el Importe de la Orden creada.");
                                 break;
                             }
 
@@ -246,32 +220,13 @@ namespace TP2_Datos_LinQ
                                     var customer = services.customerServices.GetCustomerDtoByID(customerGetId, services);
 
 
-                                    var orderDetails = services.orderDetailsServices.GetAll()//.ToList();
+                                    var orderDetails = services.orderDetailsServices.GetAll()
                                         .Where(d => d.OrderID == order.OrderID)
                                         .Select(d => d)
                                         .ToList();
 
                                     order.Order_Details = orderDetails;
-
-                                    /*
-                                    if (!order.Order_Details.Any())
-                                    {
-                                    var orderDetails2 = services.orderDetailsServices.GetAll()
-                                                           .Where(d => d.OrderID == order.OrderID)
-                                                           .Select(d => new OrderDetailDto
-                                                           {
-                                                               OrderID = d.OrderID,
-                                                               Discount = d.Discount,
-                                                               ProductID = d.ProductID,
-                                                               Quantity = d.Quantity,
-                                                               UnitPrice = d.UnitPrice,
-                                                           }).ToList();
-
-                                        order.Order_Details = orderDetails2;
-                                    }
-                                    */
-
-
+                                    
                                     NewLine();
                                     Console.WriteLine($"ID: {order.OrderID} - NOMBRE CLIENTE: '{customer.ContactName}' - IMPORTE TOTAL: ${order.calculateTotalAmount()}");
                                 }
@@ -347,18 +302,47 @@ namespace TP2_Datos_LinQ
             Console.WriteLine("Programa finalizado.");
             Console.ReadKey();
         }
+        #endregion
 
 
-
+        #region CREATE / EDIT ORDER
         public static OrderDto OrderCreateEdit(string action, ServicesController services, OrderDto orderDto)
         {
-            //var orderDto = new OrderDto();
-
-
             //CustomerID
-            NewLine();
-            Console.WriteLine("Ingrese el ID de Cliente de la Orden (5 letras):");
-            orderDto.CustomerID = Console.ReadLine().ToUpper();
+
+            var customerID = "";
+
+            var customer = new CustomerDto();
+
+            do
+            {
+                NewLine();
+                Console.WriteLine("Ingrese el ID de Cliente de la Orden (5 letras):");
+
+                customerID = Console.ReadLine().ToUpper();
+
+                if(!string.IsNullOrWhiteSpace(customerID))
+                {
+                    customer = services.customerServices.GetCustomerDtoByID(customerID, services);
+
+                    if (customer != null)
+                    {
+                        NewLine();
+                        Console.WriteLine($"Se encontró el Cliente con ID : '{customerID}'.");
+                        Console.WriteLine($"Su Nombre es : '{customer.ContactName}'.");
+                    }
+                    else
+                    {
+                        NewLine();
+                        Console.WriteLine($"No existe ningún Cliente con el nombre '{customerID}'!");
+                        Console.WriteLine($"Por favor intente nuevamente...");
+                    }
+                }
+                
+            }
+            while (customer == null);
+
+            orderDto.CustomerID = customerID;
 
 
             //OBTENER EMPLEADO POR NOMBRE Y APELLIDO
@@ -404,32 +388,29 @@ namespace TP2_Datos_LinQ
 
             NewLine();
             Console.WriteLine($"Se encontró el Empleado llamado : '{employeeDto.FirstName} {employeeDto.LastName}'.");
-            //Console.WriteLine($"Se encontró el Empleado con nombre : '{employeeDto.FirstName}' y apellido : '{employeeDto.LastName}'.");
+
             orderDto.EmployeeID = orderDto.EmployeeID;
 
 
             //OrderDate
             NewLine();
-            //Console.WriteLine("Ingrese Fecha de Orden:");
-            //orderDto.OrderDate = Console.ReadLine();
             DateTime orderDate;
             do
             {
                 NewLine();
                 Console.WriteLine("Ingrese la Fecha de Orden (formato dd/MM/yyyy):");
             }
-            while (!(DateTime.TryParseExact(Console.ReadLine(),
+            kwhile (!(DateTime.TryParseExact(Console.ReadLine(),
                                         "dd/MM/yyyy",
                                         CultureInfo.InvariantCulture,
                                         DateTimeStyles.None,
-                out orderDate)));
+                out orderDate)) || orderDate.Date < DateTime.Now.Date);
+
             orderDto.OrderDate = orderDate;
 
 
             //RequiredDate
             NewLine();
-            //Console.WriteLine("Ingrese Fecha de Orden:");
-            //orderDto.OrderDate = Console.ReadLine();
             DateTime requiredDate;
             do
             {
@@ -440,14 +421,13 @@ namespace TP2_Datos_LinQ
                                         "dd/MM/yyyy",
                                         CultureInfo.InvariantCulture,
                                         DateTimeStyles.None,
-                out requiredDate)));
+                out requiredDate)) || requiredDate.Date < DateTime.Now.Date || requiredDate.Date < orderDate.Date);
+
             orderDto.RequiredDate = requiredDate;
 
 
             //ShippedDate
             NewLine();
-            //Console.WriteLine("Ingrese Fecha de Orden:");
-            //orderDto.OrderDate = Console.ReadLine();
             DateTime shippedDate;
             do
             {
@@ -458,7 +438,8 @@ namespace TP2_Datos_LinQ
                                         "dd/MM/yyyy",
                                         CultureInfo.InvariantCulture,
                                         DateTimeStyles.None,
-                out shippedDate)));
+                out shippedDate)) || shippedDate.Date < DateTime.Now.Date || shippedDate.Date < orderDate.Date|| shippedDate.Date > requiredDate.Date);
+
             orderDto.ShippedDate = shippedDate;
 
 
@@ -471,7 +452,6 @@ namespace TP2_Datos_LinQ
                 Console.WriteLine(" 1- Speedy Express");
                 Console.WriteLine(" 2- United Package");
                 Console.WriteLine(" 3- Federal Shipping");
-                //orderDto.EmployeeID = Console.ReadLine();
 
                 int.TryParse(Console.ReadLine(), out shipVia);
                 orderDto.ShipVia = shipVia;
@@ -483,7 +463,6 @@ namespace TP2_Datos_LinQ
             //Freight
             NewLine();
             Console.WriteLine("Ingrese la Carga del envío:");
-            //orderDto.CustomerID = Console.ReadLine();
             decimal freight;
             decimal.TryParse(Console.ReadLine(), out freight);
             orderDto.Freight = freight;
@@ -532,6 +511,7 @@ namespace TP2_Datos_LinQ
                 //CREAR LÍNEAS-DETALLES DE ORDEN:
 
                 var addDetail = "";
+
                 var addedProductsNames = new List<string>();
 
                 do
@@ -553,7 +533,6 @@ namespace TP2_Datos_LinQ
 
                             //INICIO UNA NUEVA LÍNEA DE DETALLE DE ORDEN:
                             //NOMBRE DE PRODUCTO
-                            //var addedProductsNames = new List<string>();
 
                             var productName = "";
 
@@ -623,7 +602,6 @@ namespace TP2_Datos_LinQ
                                 NewLine();
                                 Console.WriteLine($"Ingrese la Cantidad de Producto ('{productToAdd.ProductName}'):");
                                 Console.WriteLine($"(La Cantidad debe ser mayor a 0)");
-                                //orderDto.EmployeeID = Console.ReadLine();
 
                                 if (!short.TryParse(Console.ReadLine(), out quantity))
                                 {
@@ -641,7 +619,6 @@ namespace TP2_Datos_LinQ
                                 NewLine();
                                 Console.WriteLine($"Ingrese el Descuento para el Producto ('{productToAdd.ProductName}'):");
                                 Console.WriteLine($"(De 0 a 30)");
-                                //orderDto.EmployeeID = Console.ReadLine();
 
                                 if (!float.TryParse(Console.ReadLine(), out discount))
                                 {
@@ -667,16 +644,7 @@ namespace TP2_Datos_LinQ
                             //LÍNEA CREADA Y AGREGADA CON ÉXITO A LA ORDEN:
                             NewLine();
                             Console.WriteLine("La línea de Detalle de Orden se ha agregado correctamente.");
-                            //}
-                            //else if (action == "UPDATE")
-                            //{
-
-                            //LÍNEA DE LA ORDEN MODIFICADA CON ÉXITO:
-                            //NewLine();
-                            //Console.WriteLine("La línea de Detalle de Orden se ha modificado correctamente.");
-                            //}
-
-
+                            
                             break;
 
                         case "N":
@@ -707,23 +675,19 @@ namespace TP2_Datos_LinQ
 
                 var response = Console.ReadLine().ToUpper();
 
-                //var generateOrder = false;
-
                 do
                 {
                     if (response == "S")
                     {
                         NewLine();
                         Console.WriteLine("Generando Orden...");
-
-                        //generateOrder = true;
+                        
                     }
                     else if (response == "N")
                     {
                         NewLine();
                         Console.WriteLine("¡Orden CANCELADA!");
 
-                        //break;
                         return null;
                     }
                     else
@@ -732,20 +696,24 @@ namespace TP2_Datos_LinQ
                     }
                 }
                 while (response != "S");
-
-                //if (!generateOrder) return null;
-
+                
                 //CREAR LA ORDEN:
+
                 services.orderServices.Create(orderDto, services);
+
             }
             else if (action == "UPDATE")
             {
+                //ACTUALIZAR / MODIFICAR LA ORDEN:
+
                 services.orderServices.Update(orderDto, services);
             }
 
             return orderDto;
         }
-        
+        #endregion
+
+        #region RETURN FIRST CHAR TO UPPER STRING
         public static string FirstCharToUpper(string input)
         {
             input = input.ToLower();
@@ -757,12 +725,18 @@ namespace TP2_Datos_LinQ
                 default: return input.First().ToString().ToUpper() + input.Substring(1);
             }
         }
+        #endregion
 
+
+        #region NEW CONSOLE EMPTY COMMAND LINE
         public static void NewLine()
         {
             Console.WriteLine("");
         }
+        #endregion
 
+
+        #region PRESS KEY TO CONTINUE
         public static void PressKeyToContinue()
         {
             NewLine();
@@ -771,5 +745,6 @@ namespace TP2_Datos_LinQ
             Console.WriteLine(".............................................");
             Console.ReadKey();
         }
+        #endregion
     }
 }
